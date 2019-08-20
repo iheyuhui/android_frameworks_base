@@ -107,6 +107,7 @@ import static android.view.WindowManager.LayoutParams.TYPE_POINTER;
 import static android.view.WindowManager.LayoutParams.TYPE_PRESENTATION;
 import static android.view.WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
 import static android.view.WindowManager.LayoutParams.TYPE_PRIVATE_PRESENTATION;
+import static android.view.WindowManager.LayoutParams.TYPE_ONEHAND_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_QS_DIALOG;
 import static android.view.WindowManager.LayoutParams.TYPE_SCREENSHOT;
 import static android.view.WindowManager.LayoutParams.TYPE_SEARCH_BAR;
@@ -845,6 +846,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
     private static final long SCREENSHOT_CHORD_DEBOUNCE_DELAY_MILLIS = 150;
+    // Time for volume and power to be pressed to take a screenshot
+    private static final long SCREENSHOT_CHORD_DELAY_TIMER = 0;
     // Increase the chord delay when taking a screenshot from the keyguard
     private static final float KEYGUARD_SCREENSHOT_CHORD_DELAY_MULTIPLIER = 2.5f;
     private boolean mScreenshotChordEnabled;
@@ -1988,7 +1991,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return (long) (KEYGUARD_SCREENSHOT_CHORD_DELAY_MULTIPLIER *
                     ViewConfiguration.get(mContext).getDeviceGlobalActionKeyTimeout());
         }
-        return ViewConfiguration.get(mContext).getDeviceGlobalActionKeyTimeout();
+        return SCREENSHOT_CHORD_DELAY_TIMER;
     }
 
     private long getRingerToggleChordDelay() {
@@ -3190,6 +3193,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             case TYPE_PRESENTATION:
             case TYPE_PRIVATE_PRESENTATION:
             case TYPE_DOCK_DIVIDER:
+            case TYPE_ONEHAND_OVERLAY:
                 break;
         }
 
@@ -3473,6 +3477,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             case TYPE_NAVIGATION_BAR:
             case TYPE_WALLPAPER:
             case TYPE_DREAM:
+            case TYPE_ONEHAND_OVERLAY:
                 return false;
             default:
                 // Hide only windows below the keyguard host window.
@@ -7612,7 +7617,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private void wakeUpFromPowerKey(long eventTime) {
-        wakeUp(eventTime, mAllowTheaterModeWakeFromPowerKey, "android.policy:POWER");
+        wakeUp(eventTime, mAllowTheaterModeWakeFromPowerKey, "android.policy:POWER", true);
     }
 
     private boolean wakeUp(long wakeTime, boolean wakeInTheaterMode, String reason) {

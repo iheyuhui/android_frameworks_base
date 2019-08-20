@@ -4173,6 +4173,14 @@ public final class Settings {
          */
         public static final String FORCE_FULLSCREEN_CUTOUT_APPS = "force_full_screen_cutout_apps";
       
+ 
+		/**
+         * Whether to enable gaming mode or not
+         *
+         * @hide
+         */
+        public static final String ENABLE_GAMING_MODE = "enable_gaming_mode";
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
@@ -4350,6 +4358,13 @@ public final class Settings {
 			PRIVATE_SETTINGS.add(SWIPE_TO_SCREENSHOT);
 			PRIVATE_SETTINGS.add(LOCKSCREEN_BATTERY_INFO);
         }
+
+        /**
+         * Whether to display one hand mode option in the power menu
+         *
+         * @hide
+         */
+        public static final String POWERMENU_ONEHAND = "powermenu_onehand";
 
         /**
          * These are all public system settings
@@ -6134,6 +6149,13 @@ public final class Settings {
          * @hide
          */
         public static final String KEYGUARD_SLICE_URI = "keyguard_slice_uri";
+
+        /**
+         * Enable face auto unlock on secure lock screens
+         *
+         * @hide
+         */
+        public static final String FACE_AUTO_UNLOCK = "face_auto_unlock";
 
         /**
          * Whether to speak passwords while in accessibility mode.
@@ -8029,6 +8051,16 @@ public final class Settings {
         /**
          * List of packages, which data need to be unconditionally cleared before full restore.
          * Type: string
+         * Wheter to dismiss notifications on fingerprint left and right swipe action
+         * @hide
+         */
+        public static final String FP_SWIPE_TO_DISMISS_NOTIFICATIONS = "fp_swipe_to_dismiss_notifications";
+
+        private static final Validator FP_SWIPE_TO_DISMISS_NOTIFICATIONS_VALIDATOR = BOOLEAN_VALIDATOR;
+
+
+        /**
+         * Whether to show the brightness slider in quick settings panel
          * @hide
          */
         public static final String PACKAGES_TO_CLEAR_DATA_BEFORE_FULL_RESTORE =
@@ -8274,6 +8306,8 @@ public final class Settings {
                     CAMERA_DOUBLE_TAP_POWER_GESTURE_DISABLED_VALIDATOR);
             VALIDATORS.put(SYSTEM_NAVIGATION_KEYS_ENABLED,
                     SYSTEM_NAVIGATION_KEYS_ENABLED_VALIDATOR);
+            VALIDATORS.put(FP_SWIPE_TO_DISMISS_NOTIFICATIONS,
+                    FP_SWIPE_TO_DISMISS_NOTIFICATIONS_VALIDATOR);
             VALIDATORS.put(QS_TILES, QS_TILES_VALIDATOR);
             VALIDATORS.put(DOZE_ENABLED, DOZE_ENABLED_VALIDATOR);
             VALIDATORS.put(DOZE_PULSE_ON_PICK_UP, DOZE_PULSE_ON_PICK_UP_VALIDATOR);

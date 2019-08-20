@@ -58,6 +58,7 @@ import com.android.server.policy.WindowManagerPolicy;
 import com.android.server.statusbar.StatusBarManagerInternal;
 
 import lineageos.providers.LineageSettings;
+import com.android.internal.util.custom.thermal.ThermalController;
 
 /**
  * Sends broadcasts about important power state changes.
@@ -608,7 +609,7 @@ final class Notifier {
     /**
      * Called when wired charging has started so as to provide user feedback
      */
-    public void onWiredChargingStarted() {
+    public void onWiredChargingStarted(int batteryLevel) {
         if (DEBUG) {
             Slog.d(TAG, "onWiredChargingStarted");
         }
@@ -616,6 +617,7 @@ final class Notifier {
         mSuspendBlocker.acquire();
         Message msg = mHandler.obtainMessage(MSG_WIRED_CHARGING_STARTED);
         msg.setAsynchronous(true);
+        msg.arg1 = batteryLevel;
         mHandler.sendMessage(msg);
     }
 
@@ -734,6 +736,7 @@ final class Notifier {
         }
 
         if (mActivityManagerInternal.isSystemReady()) {
+            ThermalController.sendActivePackageChangedBroadcast("", mContext);
             mContext.sendOrderedBroadcastAsUser(mScreenOffIntent, UserHandle.ALL, null,
                     mGoToSleepBroadcastDone, mHandler, 0, null, null);
         } else {
@@ -778,9 +781,11 @@ final class Notifier {
         mSuspendBlocker.release();
     }
 
-    private void showWiredCharging() {
-        playChargingVibration(false);
+    private void showWiredChargingStarted(int batteryLevel) {
         playChargingStartedSound();
+        if (mStatusBarManagerInternal != null) {
+            mStatusBarManagerInternal.showChargingAnimation(batteryLevel);
+        }
         mSuspendBlocker.release();
     }
 
@@ -834,7 +839,7 @@ final class Notifier {
                     break;
                 case MSG_WIRED_CHARGING_STARTED:
                 case MSG_WIRED_CHARGING_DISCONNECTED:
-                    showWiredCharging();
+                    showWiredChargingStarted(msg.arg1);
                     break;
             }
         }
